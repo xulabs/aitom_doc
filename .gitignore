@@ -1,0 +1,13 @@
+.idea
+*.pyc
+.DS_Store
+.cache
+build
+ext
+.vscode
+aitom/tomominer/core/cython/core.cpp
+__pycache__
+data
+.ipynb_checkpoints
+*.so
+
