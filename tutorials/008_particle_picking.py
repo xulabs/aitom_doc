@@ -10,6 +10,7 @@ https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-016-1283-3
 from aitom.pick.dog.particle_picking_dog__util import peak
 from aitom.pick.dog.particle_picking_dog__util import peak__partition
 from aitom.pick.dog.particle_picking_dog__filter import do_filter
+from aitom.io.mrc.crop import crop_mrc
 import os
 import json
 os.chdir("..") # Depends on your current dir
@@ -60,6 +61,10 @@ def picking(path, s1, s2, t, find_maxima=True, partition_op=None, multiprocessin
 def main():
     # Download from: https://cmu.box.com/s/9hn3qqtqmivauus3kgtasg5uzlj53wxp
     path = '/ldap_shared/home/v_zhenxi_zhu/data/aitom_demo_cellular_tomogram.mrc'
+    
+    # Also, we can crop and only use part of the mrc image instead of binning for tasks requiring higher resolution
+    # crop_path = 'cropped.mrc'
+    # crop_mrc(path, crop_path)
     
     mrc_header = io_file.read_mrc_header(path)
     voxel_spacing_in_nm = mrc_header['MRC']['xlen'] / mrc_header['MRC']['nx'] / 10
