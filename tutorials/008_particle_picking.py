@@ -11,6 +11,8 @@ from aitom.pick.dog.particle_picking_dog__util import peak
 from aitom.pick.dog.particle_picking_dog__util import peak__partition
 from aitom.pick.dog.particle_picking_dog__filter import do_filter
 from aitom.io.mrc.crop import crop_mrc
+from aitom.pick.plot.particle_location_display_imod import generate_lines
+from aitom.pick.plot.particle_location_display_imod import display_map_with_lines
 import os
 import json
 os.chdir("..") # Depends on your current dir
@@ -89,6 +91,14 @@ def main():
         json_data.append({'peak':{'loc':loc}}) 
     with open('data_json_file.json','w') as f:
         json.dump(json_data,f)
+
+    dj=json_data
+    x = N.zeros(    (len(dj), 3)  )
+    for i,d in enumerate(dj):        x[i,:] = N.array(d['peak']['loc'])
+
+    l = generate_lines(x_full=x, rad=sigma1)
+    display_map_with_lines(l=l, map_file=path)
+    
     
 if __name__ == '__main__':
     main()
