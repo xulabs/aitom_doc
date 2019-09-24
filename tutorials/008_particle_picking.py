@@ -78,6 +78,18 @@ def main():
     print("peak number reduced to %d" % len(result))
     pprint(result[:5])
     
+    # Display selected peaks using imod/3dmod (http://bio3d.colorado.edu/imod/)
+    a = io_file.read_mrc_data(path)    
+    json_data=[] # generate file for 3dmod
+    for i in range(len(result)):
+        loc_np=result[i]['x']
+        loc=[]
+        for j in range(len(loc_np)):
+            loc.append(loc_np[j].tolist())    
+        json_data.append({'peak':{'loc':loc}}) 
+    with open('data_json_file.json','w') as f:
+        json.dump(json_data,f)
+    
 if __name__ == '__main__':
     main()
 
