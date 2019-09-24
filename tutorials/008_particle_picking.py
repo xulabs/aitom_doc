@@ -22,7 +22,8 @@ from bisect import bisect
 from pprint import pprint
 '''
 parameters:
-path:file path  s1:sigma1  s2:sigma2  t:threshold level  find_maxima:peaks appears at the maximum/minimum  multiprocessing_process_num: number of multiporcessing
+path:file path  s1:sigma1  s2:sigma2  t:threshold level  find_maxima:peaks appears at the maximum/minimum, it depends on volume  
+multiprocessing_process_num: number of multiporcessing
 partition_op: partition the volume for multithreading, is a dict consists 'nonoverlap_width', 'overlap_width' and 'save_vg'
 # Take a two-dimensional image as an example, if the image size is 210*150(all in pixels), nonoverlap_width is 60 and overlap_width is 30.
 # It will be divided into 6 pieces for different threads to process. The ranges of their X and Y are
@@ -71,7 +72,7 @@ def main():
     sigma1 = max(int(7 / voxel_spacing_in_nm), 2) # 7 is optimal sigma1 val in nm according to the paper and sigma1 should at least be 2
     # print(mrc_header['MRC']['xlen'], mrc_header['MRC']['nx'], voxel_spacing_in_nm, sigma1)
     partition_op = {'nonoverlap_width': sigma1*20, 'overlap_width': sigma1*10, 'save_vg': False}
-    result = picking(path, s1=sigma1, s2=sigma1*1.1, t=3, find_maxima=True, partition_op=partition_op, multiprocessing_process_num=100)
+    result = picking(path, s1=sigma1, s2=sigma1*1.1, t=3, find_maxima=False, partition_op=partition_op, multiprocessing_process_num=100)
     print("%d particles detected, containing redundant peaks" % len(result))
     result = do_filter(pp=result, peak_dist_min=sigma1, op=None)  # remove redundant peaks
     print("peak number reduced to %d" % len(result))
