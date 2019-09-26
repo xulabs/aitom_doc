@@ -15,6 +15,7 @@ from aitom.pick.plot.particle_location_display_imod import generate_lines
 from aitom.pick.plot.particle_location_display_imod import display_map_with_lines
 import os
 import json
+import numpy as N
 os.chdir("..") # Depends on your current dir
 import aitom.io.file as io_file
 import aitom.image.vol.util as im_vol_util
