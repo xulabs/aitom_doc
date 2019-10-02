@@ -56,8 +56,8 @@ def picking(path, s1, s2, t, find_maxima=True, partition_op=None, multiprocessin
     M = peaks[0]['val'] # max val of all peaks
     m = peaks[len(peaks)-1]['val'] # min val of all peaks
     T = m+t*(M-m)/20
-    peak_vals_neg = [-peak['val'] for peak in peaks]
-    res = peaks[:bisect(peak_vals_neg, -T)]
+    peak_vals_neg = [-peak['val']*find_maxima for peak in peaks]
+    res = peaks[:bisect(peak_vals_neg, -T*find_maxima)-1]
     assert res[-1]['val'] >= T
     print("T=m+t*(M-m)/20 \nT=%f m=%f t=%f M=%f" %(T,m,t,M))
     return res
