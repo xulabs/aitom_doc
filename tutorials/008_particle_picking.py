@@ -72,8 +72,12 @@ def main():
     
     mrc_header = io_file.read_mrc_header(path)
     voxel_spacing_in_nm = mrc_header['MRC']['xlen'] / mrc_header['MRC']['nx'] / 10
-    sigma1 = max(int(7 / voxel_spacing_in_nm), 2) # 7 is optimal sigma1 val in nm according to the paper and sigma1 should at least be 2
+    sigma1 = max(int(7 / voxel_spacing_in_nm), 2) # In general, 7 is optimal sigma1 val in nm according to the paper and sigma1 should at least be 2
+    print('sigma1=%d' %sigma1)
+    # For particular tomogram, larger sigma1 value may have better results. Use IMOD to display selected peaks and determine best sigma1.
+    # For 'aitom_demo_cellular_tomogram.mrc', sigma1 is 5 rather than 3 for better performance(in this tomogram, 7nm corresponds to 3.84 pixels)
     # print(mrc_header['MRC']['xlen'], mrc_header['MRC']['nx'], voxel_spacing_in_nm, sigma1)
+    
     partition_op = {'nonoverlap_width': sigma1*20, 'overlap_width': sigma1*10, 'save_vg': False}
     result = picking(path, s1=sigma1, s2=sigma1*1.1, t=3, find_maxima=False, partition_op=partition_op, multiprocessing_process_num=100)
     print("%d particles detected, containing redundant peaks" % len(result))
