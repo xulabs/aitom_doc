@@ -19,7 +19,7 @@ out_file: the output file that contains converted density maps
 op = {'situs_pdb2vol_program':'/shared/opt/local/img/em/et/util/situs/Situs_2.7.2/bin/pdb2vol', 'spacing_s': [10.0], 'resolution_s':[10.0], 'pdb_dir':'/shared/data/pdb', 'out_file':'situs_maps.pickle'}
 
 # convert to density maps, save to situs_maps.pickle
-import aitom.tomominer.structure.pdb.situs_pdb2vol__batch as TSPS
+import aitom.structure.pdb.situs_pdb2vol__batch as TSPS
 TSPS.batch_processing(op)
 
 
@@ -28,11 +28,11 @@ TSPS.batch_processing(op)
 The density maps in situs_maps.pickle have different sizes for different structures,
 use resize_center_batch_dict() to change them into same size
 '''
-import aitom.tomominer.io.file as TIF
+import aitom.io.file as TIF
 ms = TIF.pickle_load('situs_maps.pickle')
 
 ms = {_:ms[_][10.0][10.0]['map'] for _ in ms}
-import aitom.tomominer.image.vol.util as TIVU
+import aitom.image.vol.util as TIVU
 ms = TIVU.resize_center_batch_dict(vs=ms, cval=0.0)
 
 
