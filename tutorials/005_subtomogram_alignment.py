@@ -24,7 +24,7 @@ vr = TGR.rotate(v, angle=angle, loc_r=loc_r, default_val=0.0)
 #--------------------------------
 # align vr against v
 
-import aitom.align.util as TAU
+import aitom.align.fast.util as TAU
 al = TAU.align_vols_no_mask(v, vr)
 print('rigid transform of alignment', al)
 
