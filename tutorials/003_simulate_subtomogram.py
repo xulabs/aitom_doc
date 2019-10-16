@@ -14,9 +14,9 @@ import aitom.tomominer.io.file as TIF
 import numpy as N
 import pickle
 import aitom.tomominer.simulation.reconstruction__simple_convolution as TSRSC
-import aitom.tomominer.model.util as TMU
-import aitom.tomominer.geometry.ang_loc as TGAL
-import aitom.tomominer.geometry.rotate as TGR
+import aitom.model.util as MU
+import aitom.geometry.ang_loc as GAL
+import aitom.geometry.rotate as GR
 
 
 # set parameters for the simulation
@@ -24,16 +24,16 @@ import aitom.tomominer.geometry.rotate as TGR
 op = {'model':{'missing_wedge_angle':30, 'SNR':0.05}, 'ctf':{'pix_size':1.0, 'Dz':-5.0, 'voltage':300, 'Cs':2.0, 'sigma':0.4}}
 
 # generate a density map v that contains a toy structure
-v = TMU.generate_toy_model(dim_siz=64)  # generate a pseudo density map
+v = MU.generate_toy_model(dim_siz=64)  # generate a pseudo density map
 print(v.shape)
 
 
 # randomly rotate and translate v
 loc_proportion = 0.1
 loc_max = N.array(v.shape, dtype=float) * loc_proportion
-angle = TGAL.random_rotation_angle_zyz()
+angle = GAL.random_rotation_angle_zyz()
 loc_r = (N.random.random(3)-0.5)*loc_max
-vr = TGR.rotate(v, angle=angle, loc_r=loc_r, default_val=0.0)
+vr = GR.rotate(v, angle=angle, loc_r=loc_r, default_val=0.0)
 
 # generate simulated subtomogram vb from v
 vb = TSRSC.do_reconstruction(vr, op, verbose=True)
@@ -44,10 +44,10 @@ TIF.put_mrc(vb, '/tmp/vb.mrc', overwrite=True)
 TIF.put_mrc(v, '/tmp/v.mrc', overwrite=True)
 
 # save images of the slices of the corresponding 3D iamges for visual inspection
-import aitom.tomominer.image.io as TIIO
+import aitom.image.io as IIO
 import aitom.tomominer.image.vol.util as TIVU
-TIIO.save_png(TIVU.cub_img(vb)['im'], "/tmp/vb.png")
-TIIO.save_png(TIVU.cub_img(v)['im'], "/tmp/v.png")
+IIO.save_png(TIVU.cub_img(vb)['im'], "/tmp/vb.png")
+IIO.save_png(TIVU.cub_img(v)['im'], "/tmp/v.png")
 
 
 
