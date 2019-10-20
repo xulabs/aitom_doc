@@ -23,25 +23,25 @@ from aitom.filter.gaussian import smooth
 from aitom.filter.gaussian import dog_smooth
 from bisect import bisect
 from pprint import pprint
-'''
-parameters:
-path:file path  s1:sigma1  s2:sigma2  t:threshold level  find_maxima:peaks appears at the maximum/minimum, it depends on volume  
-multiprocessing_process_num: number of multiporcessing
-partition_op: partition the volume for multithreading, is a dict consists 'nonoverlap_width', 'overlap_width' and 'save_vg'
-# Take a two-dimensional image as an example, if the image size is 210*150(all in pixels), nonoverlap_width is 60 and overlap_width is 30.
-# It will be divided into 6 pieces for different threads to process. The ranges of their X and Y are
-# (first line)  (0-90)*(0-90) (60-150)*(0-90) (120-210)*(0-90) (0-90)
-# (second line) (0-90)*(60-150) (60-150)*(60-150) (120-210)*(60-150)
-In general, s2=1.1*s1, s1 and t depend on particle size and noise. In practice, s1 should be roughly equal to the particle radius(in pixels). In related paper, the model achieves highest comprehensive score when s1=7 and t=3. 
 
-return:
-a list including all peaks information (in descending order of value),  each element in the return list looks like: 
-{'val': 281.4873046875, 'x': [1178, 1280, 0], 'uuid': '6ad66107-088c-471e-b65f-0b3b2fdc35b0'}
-'val' is the score of the peak when picking, only the score is higher than the threshold will the peak be selected.
-'x' is the center of the peak in the tomogram.
-'uuid' is an unique id for each peak.
-'''
 def picking(path, s1, s2, t, find_maxima=True, partition_op=None, multiprocessing_process_num=0):
+    '''
+    parameters:
+    path:file path  s1:sigma1  s2:sigma2  t:threshold level  find_maxima:peaks appears at the maximum/minimum  multiprocessing_process_num: number of multiporcessing
+    partition_op: partition the volume for multithreading, is a dict consists 'nonoverlap_width', 'overlap_width' and 'save_vg'
+    # Take a two-dimensional image as an example, if the image size is 210*150(all in pixels), nonoverlap_width is 60 and overlap_width is 30.
+    # It will be divided into 6 pieces for different threads to process. The ranges of their X and Y are
+    # (first line)  (0-90)*(0-90) (60-150)*(0-90) (120-210)*(0-90) (0-90)
+    # (second line) (0-90)*(60-150) (60-150)*(60-150) (120-210)*(60-150)
+    In general, s2=1.1*s1, s1 and t depend on particle size and noise. In practice, s1 should be roughly equal to the particle radius(in pixels). In related paper, the model achieves highest comprehensive score when s1=7 and t=3. 
+
+    return:
+    a list including all peaks information (in descending order of value),  each element in the return list looks like: 
+    {'val': 281.4873046875, 'x': [1178, 1280, 0], 'uuid': '6ad66107-088c-471e-b65f-0b3b2fdc35b0'}
+    'val' is the score of the peak when picking, only the score is higher than the threshold will the peak be selected.
+    'x' is the center of the peak in the tomogram.
+    'uuid' is an unique id for each peak.
+    '''
     a = io_file.read_mrc_data(path)
     print("file has been read")
     temp = im_vol_util.cub_img(a)
@@ -85,6 +85,15 @@ def main():
     print("peak number reduced to %d" % len(result))
     pprint(result[:5])
     
+    # (Optional) Save subvolumes of peaks for autoencoder input
+    dump_subvols = True
+    if dump_subvols: # use later for autoencoder
+        subvols_loc = "demo_single_particle_subvolumes.pickle"
+        from aitom.classify.deep.unsupervised.autoencoder.autoencoder_util import peaks_to_subvolumes
+        d = peaks_to_subvolumes(io_file.read_mrc_data(path)['vt'], result, 32)
+        io_file.pickle_dump(d, subvols_loc)
+        print("Save subvolumes .pickle file to:", subvols_loc)
+        
     # Display selected peaks using imod/3dmod (http://bio3d.colorado.edu/imod/)
     a = io_file.read_mrc_data(path)    
     json_data=[] # generate file for 3dmod
