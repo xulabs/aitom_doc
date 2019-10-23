@@ -90,7 +90,8 @@ def main():
     if dump_subvols: # use later for autoencoder
         subvols_loc = "demo_single_particle_subvolumes.pickle"
         from aitom.classify.deep.unsupervised.autoencoder.autoencoder_util import peaks_to_subvolumes
-        d = peaks_to_subvolumes(io_file.read_mrc_data(path)['vt'], result, 32)
+        a = io_file.read_mrc_data(path)
+        d = peaks_to_subvolumes(im_vol_util.cub_img(a)['vt'], result, 32)
         io_file.pickle_dump(d, subvols_loc)
         print("Save subvolumes .pickle file to:", subvols_loc)
         
