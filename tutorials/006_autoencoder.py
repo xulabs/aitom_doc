@@ -8,7 +8,9 @@ https://github.com/xulabs/projects/tree/master/autoencoder
 '''
 
 '''
-Keras need to be 2.1.x for autoencoder
+Requirements:
+- Keras need to be 2.1.x for autoencoder
+- run on GPU
 
 Step1:Prepare input dataset
 
@@ -43,12 +45,20 @@ import aitom.classify.deep.unsupervised.autoencoder.autoencoder as AE
 # parameters1 = ["example/subvolumes_example_2.pickle", "None", "False", "4"]
 # parameters2 = ["example/subvolumes_example_1.pickle", "example/tomogram.rec", "True", "100"]
 
+# This example dataset is generated in the particle picking tutorial
+single_particle_param = ['data/demo_single_particle_subvolumes.pickle', 'None', "False", 4]
 # demo dataset format is different, which has 2 kinds of particle and their templates
-parameters_demo = ['data/aitom_demo_subtomograms.pickle', 'None', "False", 4]
+multiple_particles_params = ['data/aitom_demo_subtomograms.pickle', 'None', "False", 4]
 
-#here's the 4 inputs
-d = AE.auto.pickle_load(parameters_demo[0])#pickle data file of CECT small subvolumes
-d = d['5T2C_data']
+parameters_demo = single_particle_param # choose one of the above 
+d = AE.auto.pickle_load(parameters_demo[0]) # pickle data file of CECT small subvolumes
+
+if parameters_demo == multiple_particles_params:  # TODO add multiparticle tutorial
+    # choose one particle and convert the data format
+    # d = d['5T2C_data']
+    # from aitom.classify.deep.unsupervised.autoencoder.autoencoder_util import subtomograms_to_subvolumes
+    # d = subtomograms_to_subvolumes(d)
+    pass
 
 img_org_file = parameters_demo[1]#A tomogram file in .rec format, which can be None when pose normalization is not required
 pose = eval(parameters_demo[2])#Whether the optional pose normalization step should be applied  True or False
