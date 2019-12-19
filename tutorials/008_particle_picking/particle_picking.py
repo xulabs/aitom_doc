@@ -23,6 +23,7 @@ from aitom.filter.gaussian import smooth
 from aitom.filter.gaussian import dog_smooth
 from bisect import bisect
 from pprint import pprint
+import aitom.io.mrcfile_proxy as TIM
 
 def picking(path, s1, s2, t, find_maxima=True, partition_op=None, multiprocessing_process_num=0):
     '''
@@ -96,7 +97,17 @@ def main():
         print("Save subvolumes .pickle file to:", subvols_loc)
         
     # Display selected peaks using imod/3dmod (http://bio3d.colorado.edu/imod/)
-    a = io_file.read_mrc_data(path)    
+    '''
+    #Optional: smooth original image
+    a = io_file.read_mrc_data(path) 
+    path =path[:-5]+'_smoothed'+path[-4:]
+    temp = im_vol_util.cub_img(a)
+    s1 = sigma1
+    s2=sigma1*1.1
+    vg = dog_smooth(temp['vt'], s1,s2)
+    #vg = smooth(temp['vt'], s1)
+    TIM.write_data(vg,path)
+    '''  
     json_data=[] # generate file for 3dmod
     for i in range(len(result)):
         loc_np=result[i]['x']
