@@ -23,6 +23,7 @@ from aitom.filter.gaussian import smooth
 from aitom.filter.gaussian import dog_smooth
 from bisect import bisect
 from pprint import pprint
+import aitom.io.mrcfile_proxy as TIM
 
 def picking(path, s1, s2, t, find_maxima=True, partition_op=None, multiprocessing_process_num=0):
     '''
