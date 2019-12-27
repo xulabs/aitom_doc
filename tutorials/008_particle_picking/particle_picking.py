@@ -25,11 +25,12 @@ from bisect import bisect
 from pprint import pprint
 import aitom.io.mrcfile_proxy as TIM
 
-def picking(path, s1, s2, t, find_maxima=True, partition_op=None, multiprocessing_process_num=0):
+def picking(path, s1, s2, t, find_maxima=True, partition_op=None, multiprocessing_process_num=0, pick_num=None):
     '''
     parameters:
     path:file path  s1:sigma1  s2:sigma2  t:threshold level  find_maxima:peaks appears at the maximum/minimum  multiprocessing_process_num: number of multiporcessing
     partition_op: partition the volume for multithreading, is a dict consists 'nonoverlap_width', 'overlap_width' and 'save_vg'
+    pick_num: the max number of particles to pick out
     # Take a two-dimensional image as an example, if the image size is 210*150(all in pixels), nonoverlap_width is 60 and overlap_width is 30.
     # It will be divided into 6 pieces for different threads to process. The ranges of their X and Y are
     # (first line)  (0-90)*(0-90) (60-150)*(0-90) (120-210)*(0-90) (0-90)
@@ -60,6 +61,14 @@ def picking(path, s1, s2, t, find_maxima=True, partition_op=None, multiprocessin
     peak_vals_neg = [-peak['val']*find_maxima for peak in peaks]
     res = peaks[:bisect(peak_vals_neg, -T*find_maxima)-1]
     assert res[-1]['val'] >= T
+    print("%d particles detected, containing redundant peaks" % len(res))
+    result = do_filter(pp=res, peak_dist_min=s1, op=None)  # remove redundant peaks
+    print("peak number reduced to %d" % len(result))
+    if pick_num is None:
+        pass
+    elif pick_num < len(res):
+        res = res[:pick_num]
+
     print("T=m+t*(M-m)/20 \nT=%f m=%f t=%f M=%f" %(T,m,t,M))
     return res
     
@@ -80,10 +89,8 @@ def main():
     # print(mrc_header['MRC']['xlen'], mrc_header['MRC']['nx'], voxel_spacing_in_nm, sigma1)
     
     partition_op = {'nonoverlap_width': sigma1*20, 'overlap_width': sigma1*10, 'save_vg': False}
-    result = picking(path, s1=sigma1, s2=sigma1*1.1, t=3, find_maxima=False, partition_op=partition_op, multiprocessing_process_num=100)
-    print("%d particles detected, containing redundant peaks" % len(result))
-    result = do_filter(pp=result, peak_dist_min=sigma1, op=None)  # remove redundant peaks
-    print("peak number reduced to %d" % len(result))
+    result = picking(path, s1=sigma1, s2=sigma1*1.1, t=3, find_maxima=False, partition_op=partition_op, multiprocessing_process_num=10, pick_num=1000)
+    print("DoG done, %d particles picked" % len(result))
     pprint(result[:5])
     
     # (Optional) Save subvolumes of peaks for autoencoder input
