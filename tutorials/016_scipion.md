@@ -22,21 +22,18 @@
    Note:
    1. Do not have conda in the path (remove any conda initiatization in the bash.rc or equivalent).
    2. Tell Scipion how to activate conda by setting the variable CONDA_ACTIVATION_CMD to something like: I have this working for my laptop in my <SCIPION_HOME>/config/scipion.conf , under [BUILD] section : CONDA_ACTIVATION_CMD= eval "$(/extra/miniconda3/bin/conda shell.bash hook)"
-   3. The plugin will create a conda VE('aitom-0.1') automatically. The plugin is able to install AITom automatically in the furture
+   3. The plugin will create a conda VE('aitom-0.0.1') and install AITom automatically.
    ```
    # install AITom plugin
    git clone https://github.com/scipion-em/scipion-em-aitom
    scipion installp -p local/path/to/scipion-em-aitom --devel
+   
+   # unistall
+   # scipion uninstallp -p scipion-em-aitom
    ```
 
-5. Install AITom manually in conda VE 'aitom-0.1':
-   ```
-   conda activate aitom-0.1
-   git clone https://github.com/xulabs/aitom
-   # install AITom following https://github.com/xulabs/aitom/blob/master/doc/install.md
-   ```
-
-6. Test the plugin:
+5. Test the plugin:
    ```
    scipion test aitom.tests.tests_picking.TestAitomPicking
    ```
+   
