@@ -50,9 +50,14 @@ import matplotlib.pyplot as plt
 
 plt.imshow(a_im['im'], cmap='gray')
 
+# save the figure into a png file
+import aitom.image.io as image_io
+image_io.save_png(m=a_im['im'], name='/tmp/a_im.png')
+
 # display image using `image.util.dsp_cub`
 
 im_vol_util.dsp_cub(a)
 
-
+# save slices of a into a png file
+image_io.save_cub_png(v=a, name='/tmp/a.png')
 
