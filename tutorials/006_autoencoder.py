@@ -51,7 +51,8 @@ single_particle_param = ['data/demo_single_particle_subvolumes.pickle', 'None', 
 multiple_particles_params = ['data/aitom_demo_subtomograms.pickle', 'None', "False", 4]
 
 parameters_demo = single_particle_param # choose one of the above 
-d = AE.auto.pickle_load(parameters_demo[0]) # pickle data file of CECT small subvolumes
+import aitom.io.file as AIF
+d = AIF.pickle_load(parameters_demo[0]) # pickle data file of CECT small subvolumes
 
 if parameters_demo == multiple_particles_params:  # TODO add multiparticle tutorial
     # choose one particle and convert the data format
